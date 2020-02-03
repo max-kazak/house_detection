@@ -14,6 +14,7 @@ class DataGeneratorFolder(Sequence):
                  batch_size=1, image_size=1472, nb_y_features=1,
                  augmentation=None,
                  shuffle=True):
+
         self.image_filenames = [os.path.join(root_dir, image_folder, filename)
                                 for filename in os.listdir(os.path.join(root_dir, image_folder))]
         self.mask_names = [os.path.join(root_dir, mask_folder, filename)

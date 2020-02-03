@@ -25,7 +25,7 @@ class Network(object):
                  test_data_root_dir='./data/processed/test/',
                  image_folder='images', mask_folder='masks',
                  train_img_size=512,
-                 train_batch_size=8,
+                 train_batch_size=4,
                  model_out='./models/houses_model_unet.h5'):
 
         self.train_data_root_dir = train_data_root_dir
@@ -36,6 +36,8 @@ class Network(object):
         self.train_img_size = train_img_size
         self.train_batch_size = train_batch_size
         self.model_out = model_out
+
+        Path(model_out).parent.mkdir(parents=True, exist_ok=True)
 
         self.model = Unet(backbone_name='efficientnetb0', encoder_weights='imagenet', encoder_freeze=False)
         self.history = None  # generated after train()
@@ -78,21 +80,21 @@ class Network(object):
 
         # reduces learning rate on plateau
         lr_reducer = ReduceLROnPlateau(factor=0.1,
-                                       cooldown=10,
-                                       patience=10, verbose=1,
-                                       min_lr=0.1e-5)
+                                       cooldown=5,
+                                       patience=5, verbose=1,
+                                       min_lr=1e-6)
         # autosave models
         model_autosave = ModelCheckpoint(self.model_out, monitor='val_iou_score',
-                                         mode='max', save_best_only=True, verbose=1, period=10)
+                                         mode='max', save_best_only=True, verbose=1)
 
         # stop learining as metric on validatopn stop increasing
-        early_stopping = EarlyStopping(patience=10, verbose=1, mode='auto')
+        early_stopping = EarlyStopping(patience=12, verbose=1, mode='max', monitor='val_iou_score')
 
         callbacks = [model_autosave, lr_reducer, early_stopping]
 
         return callbacks
 
-    def plot_training_history(self, output_dir=None):
+    def plot_training_history(self, out=None):
         """
         Plots model training history
 
@@ -106,8 +108,9 @@ class Network(object):
             ax_acc.plot(self.history.epoch, self.history.history["iou_score"], label="Train iou")
             ax_acc.plot(self.history.epoch, self.history.history["val_iou_score"], label="Validation iou")
             ax_acc.legend()
-            if output_dir is not None:
-                fig.savefig(output_dir)
+            if out is not None:
+                Path(out).parent.mkdir(parents=True, exist_ok=True)
+                fig.savefig(out)
             else:
                 return fig
         else:
@@ -118,12 +121,16 @@ class Network(object):
         callbacks = self.get_callbacks()
 
         self.model.compile(optimizer=Adam(),
-                           loss=bce_jaccard_loss, metrics=[iou_score])
+                           loss=bce_jaccard_loss,
+                           metrics=[iou_score])
 
-        self.history = self.model.fit_generator(train_generator, shuffle=True,
-                                                epochs=50, workers=4, use_multiprocessing=True,
+        self.history = self.model.fit_generator(train_generator,
+                                                shuffle=True,
+                                                epochs=100,
+                                                use_multiprocessing=False,
                                                 validation_data=val_generator,
-                                                verbose=1, callbacks=callbacks)
+                                                verbose=1,
+                                                callbacks=callbacks)
 
     def test(self, out=None):
         _, _, test_generator = self.get_generators()
@@ -137,9 +144,12 @@ class Network(object):
         logger.info(report)
 
         if out is not None:
+            Path(out).parent.mkdir(parents=True, exist_ok=True)
             f = open(out, 'w+')
             f.write(report)
             f.close()
+
+        return report
 
 
 def main():
