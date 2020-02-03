@@ -13,10 +13,7 @@ logging.basicConfig(level=logging.INFO, format=log_fmt)
 
 
 def process_img(input_filepath, output_filepath, img_size, input_format='.tif'):
-    if input_format == '.tif':
-        img = cv2.imread(input_filepath)
-    else:
-        img = cv2.imread(input_filepath)
+    img = cv2.imread(input_filepath)
     img = cv2.resize(img, dsize=(img_size, img_size))
     cv2.imwrite(output_filepath, img)
 
@@ -55,7 +52,7 @@ def process_imgs_masks(input_path, output_path,
 @click.option('--p_val', default=.3, help='Percentage of remaining samples reserved for validation.')
 @click.option('--img_size', default=1500, help='Size of the processed image (squared).')
 @click.option('--input_format', default='.tif')
-@click.option('--output_format', default='.jpg')
+@click.option('--output_format', default='.png')
 def main(input_path, output_path, n_test, p_val, img_size, input_format, output_format):
     """ Runs data processing scripts to turn raw data from (../raw) into
         cleaned data ready to be analyzed (saved in ../processed).
