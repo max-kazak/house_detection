@@ -45,7 +45,7 @@ To reproduce my results follow these steps:
     │   ├── processed      <- The final, canonical data sets for modeling.
     │   └── raw            <- The original, immutable data dump.
     │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries (not versioned)
+    ├── models             <- Trained and serialized models (not versioned)
     │
     ├── notebooks          <- Jupyter notebooks.
     │
