@@ -155,7 +155,7 @@ class Network(object):
 def main():
     net = Network()
     net.train()
-    net.plot_training_history(r'./reports/graphs/train_history.png')
+    net.plot_training_history(r'./reports/figures/train_history.png')
     net.test(r'.reports/report.txt')
 
 

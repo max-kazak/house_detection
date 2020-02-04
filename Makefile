@@ -19,9 +19,8 @@ endif
 #################################################################################
 
 ## Install Python Dependencies
-requirements: test_environment
-	$(PYTHON_INTERPRETER) -m pip install -U pip setuptools wheel
-	$(PYTHON_INTERPRETER) -m pip install -r requirements.txt
+requirements:
+	pip3 install -r requirements.txt
 
 ## Download raw dataset
 download_data:
@@ -39,6 +38,15 @@ clean:
 ## train model
 train:
 	$(PYTHON_INTERPRETER) src/models/train_model.py
+
+## generate house masks and reports
+predict:
+	$(PYTHON_INTERPRETER) src/models/predict_model.py -m models/houses_model_unet.h5 \
+	--root_dir data/processed/test/ --image_folder images --mask_folder masks \
+	--predict_dir data/predict/ --report_dir reports/predictions/
+
+## Run whole pipeline
+pipeline: data train predict clean
 
 #################################################################################
 # PROJECT RULES                                                                 #
