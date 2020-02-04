@@ -7,8 +7,8 @@ In this project I'm training neural network to detect houses on the satellite im
 Satellite images are provided by [Inria Aerial Image Labeling Dataset](https://project.inria.fr/aerialimagelabeling/).  
 This dataset contains both RGB images of different cities and masks showing location of the man-made structures.  
 For this project images used for competition testing were discarded and instead training images were divided into following categories:  
- - test: 5 images from each of 5 cities (25 images total)
- - val: 30% of the remaining images were set aside for validation purposes during training
+ - test: 5 images from each of 5 cities . 
+ - val: 30% of the remaining images were set aside for validation purposes during training . 
  - train: remaining 110 images were used for training  
  
 All images were resized to 1500x1500px.
