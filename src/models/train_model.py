@@ -156,7 +156,7 @@ def main():
     net = Network()
     net.train()
     net.plot_training_history(r'./reports/figures/train_history.png')
-    net.test(r'.reports/report.txt')
+    net.test(r'./reports/report.txt')
 
 
 if __name__ == "__main__":
